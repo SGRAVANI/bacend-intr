@@ -3,6 +3,7 @@ import mongoose, { mongo } from "mongoose"
 import cors from "cors"
 import dotenv from "dotenv"
 import { PersonalData } from "./models/personal.model.js"
+import { UserRouter } from "./routes/education.routes.js"
 let app=express()
 app.use(cors({
     origin:['http://localhost:5173','https://frontend-inter-zeta.vercel.app'],
@@ -19,13 +20,6 @@ async function  conectDB() {
         console.log("error occured in database")
     }
 }
-
-app.use((err,req,res,next)=>{
-    if(err)
-    {
-        return res.status(500).json({msg:"internal server error"})
-    }
-})
 app.get("/personal",async (req,res)=>{
     try{
         let data=await PersonalData.find({})
@@ -38,6 +32,14 @@ app.get("/personal",async (req,res)=>{
     }
 
 })
+app.use("/user",UserRouter)
+app.use((err,req,res,next)=>{
+    if(err)
+    {
+        return res.status(500).json({msg:"internal server error"})
+    }
+})
+
 app.listen(process.env.PORT,async ()=>{
     await conectDB()
     console.log("server is listening on port ",process.env.PORT)
